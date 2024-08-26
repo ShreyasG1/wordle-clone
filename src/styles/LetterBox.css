@@ -1,12 +1,12 @@
 .letter-box {
-  width: 3rem;
-  height: 3rem;
-  border: 2px solid gray;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid gray;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

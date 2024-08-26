@@ -1,8 +1,8 @@
-import '../styles/LetterBox.css';
-import { LetterBoxProps } from '../types';
+import "../styles/LetterBox.css";
+import { LetterBoxProps } from "../types";
 
 const LetterBox = ({ letter }: LetterBoxProps) => {
-  return <div className="letter-box">{letter}</div>;
+    return <div className="letter-box">{letter}</div>;
 };
 
 export default LetterBox;
