@@ -9,7 +9,7 @@ const Grid = () => {
         new Array(6).fill(0).map(() => new Array(5).fill(""))
     );
 
-    useKeyCapture({
+    const { pressedKeys } = useKeyCapture({
         setGrid,
         grid,
     });
@@ -22,6 +22,13 @@ const Grid = () => {
                         <LetterBox
                             key={`box-${cellIndex + 1}`}
                             letter={letter}
+                            isAbsent={pressedKeys[letter]?.isAbsent}
+                            isInRightPosition={
+                                pressedKeys[letter]?.isInRightPosition
+                            }
+                            isInWrongPosition={
+                                pressedKeys[letter]?.isInWrongPosition
+                            }
                         />
                     ))}
                 </div>

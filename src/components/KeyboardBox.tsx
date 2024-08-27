@@ -1,14 +1,19 @@
-import { LetterBoxProps } from "../types";
+type Props = {
+    letter: string;
+    isAbsent: boolean;
+    isInWrongPosition: boolean;
+    isInRightPosition: boolean;
+};
 
-const LetterBox = ({
+const KeyboardBox = ({
     letter,
     isAbsent,
-    isInRightPosition,
     isInWrongPosition,
-}: LetterBoxProps) => {
+    isInRightPosition,
+}: Props) => {
     return (
         <div
-            className={`letter-box ${
+            className={`key ${
                 isAbsent
                     ? "absent"
                     : isInRightPosition
@@ -23,4 +28,4 @@ const LetterBox = ({
     );
 };
 
-export default LetterBox;
+export default KeyboardBox;
