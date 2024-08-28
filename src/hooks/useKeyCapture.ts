@@ -63,49 +63,93 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
                 currentRow < 5
             ) {
                 setGrid((prev) => {
-                    const newGrid = prev.map((row, index) => {
+                    return prev.map((row, index) => {
                         if (index === currentRow) {
                             const clonedMap = new Map(wordCountMap);
+                            const newRow = new Array(currentWord.length).fill({
+                                isAbsent: false,
+                                isInRightPosition: false,
+                                isInWrongPosition: false,
+                            });
+                            let letterCount;
 
-                            return currentWord
-                                .split("")
-                                .map((letter, index) => {
-                                    const letterCount = clonedMap.get(letter);
-                                    if (letterCount) {
-                                        clonedMap.set(letter, letterCount - 1);
-                                    }
-                                    return {
-                                        letter,
-                                        isAbsent: !letterCount,
-                                        isInRightPosition:
-                                            wordOfTheDay[index] === letter,
-                                        isInWrongPosition:
-                                            !!letterCount &&
-                                            wordOfTheDay[index] !== letter,
+                            for (let i = 0; i < currentWord.length; i++) {
+                                letterCount = clonedMap.get(currentWord[i]);
+                                if (
+                                    currentWord[i] === wordOfTheDay[i] &&
+                                    letterCount
+                                ) {
+                                    newRow[i] = {
+                                        ...newRow[i],
+                                        letter: currentWord[i],
+                                        isInRightPosition: true,
                                     };
-                                });
+                                    clonedMap.set(
+                                        currentWord[i],
+                                        letterCount - 1
+                                    );
+                                }
+                            }
+
+                            for (let i = 0; i < currentWord.length; i++) {
+                                letterCount = clonedMap.get(currentWord[i]);
+                                if (newRow[i].isInRightPosition === true) {
+                                    continue;
+                                }
+                                if (letterCount) {
+                                    newRow[i] = {
+                                        ...newRow[i],
+                                        letter: currentWord[i],
+                                        isInWrongPosition: true,
+                                    };
+                                    clonedMap.set(
+                                        currentWord[i],
+                                        letterCount - 1
+                                    );
+                                } else {
+                                    newRow[i] = {
+                                        ...newRow[i],
+                                        letter: currentWord[i],
+                                        isAbsent: true,
+                                    };
+                                }
+                            }
+
+                            return newRow;
                         }
                         return row;
                     });
-                    return newGrid;
                 });
                 setPressedKeys((prev) => {
-                    const newWordMap = currentWord
-                        .split("")
-                        .reduce((wordMap, letter, index) => {
+                    const newWordMap = currentWord.split("").reduce(
+                        (
+                            wordMap: {
+                                [key: string]: {
+                                    isAbsent: boolean;
+                                    isInRightPosition: boolean;
+                                    isInWrongPosition: boolean;
+                                };
+                            },
+                            letter,
+                            index
+                        ) => {
                             const letterIndex = wordOfTheDay.indexOf(letter);
                             return {
                                 ...wordMap,
                                 [letter]: {
                                     isAbsent: letterIndex === -1,
                                     isInRightPosition:
+                                        wordMap[letter]?.isInRightPosition ||
                                         wordOfTheDay[index] === letter,
                                     isInWrongPosition:
                                         letterIndex !== -1 &&
-                                        wordOfTheDay[index] !== letter,
+                                        wordOfTheDay[index] !== letter &&
+                                        !wordMap[letter]?.isInRightPosition,
                                 },
                             };
-                        }, {});
+                        },
+                        {}
+                    );
                     return {
                         ...prev,
                         ...newWordMap,
