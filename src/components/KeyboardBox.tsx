@@ -5,12 +5,12 @@ type Props = {
     isInRightPosition: boolean;
 };
 
-const KeyboardBox = ({
+const KeyboardBox: React.FC<Props> = ({
     letter,
     isAbsent,
     isInWrongPosition,
     isInRightPosition,
-}: Props) => {
+}) => {
     return (
         <div
             className={`key ${

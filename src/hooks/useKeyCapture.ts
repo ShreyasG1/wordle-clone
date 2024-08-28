@@ -7,10 +7,18 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
     const [currentWord, setCurrentWord] = useState<string>("");
     const [pressedKeys, setPressedKeys] = useState<pressedKeysState>({});
 
-    const wordOfTheDay: string = useMemo(
-        () => getWordleWord().toUpperCase(),
-        []
-    );
+    const { wordOfTheDay, wordCountMap } = useMemo(() => {
+        const wordCountMap: Map<string, number> = new Map(),
+            wordOfTheDay: string = getWordleWord().toUpperCase();
+
+        for (let i = 0; i < wordOfTheDay.length; i++) {
+            wordCountMap.set(
+                wordOfTheDay[i],
+                (wordCountMap.get(wordOfTheDay[i]) || 0) + 1
+            );
+        }
+        return { wordOfTheDay, wordCountMap };
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -22,7 +30,10 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
                     const newGrid = prev.map((row, index) => {
                         if (index === currentRow) {
                             const newRow = [...row];
-                            newRow[currentWordLength] = key.toUpperCase();
+                            newRow[currentWordLength] = {
+                                ...newRow[currentWordLength],
+                                letter: key.toUpperCase(),
+                            };
                             return newRow;
                         }
                         return row;
@@ -35,7 +46,10 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
                     const newGrid = prev.map((row, index) => {
                         if (index === currentRow) {
                             const newRow = [...row];
-                            newRow[currentWordLength - 1] = "";
+                            newRow[currentWordLength - 1] = {
+                                ...newRow[currentWordLength - 1],
+                                letter: "",
+                            };
                             return newRow;
                         }
                         return row;
@@ -51,7 +65,25 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
                 setGrid((prev) => {
                     const newGrid = prev.map((row, index) => {
                         if (index === currentRow) {
-                            return currentWord.split("");
+                            const clonedMap = new Map(wordCountMap);
+
+                            return currentWord
+                                .split("")
+                                .map((letter, index) => {
+                                    const letterCount = clonedMap.get(letter);
+                                    if (letterCount) {
+                                        clonedMap.set(letter, letterCount - 1);
+                                    }
+                                    return {
+                                        letter,
+                                        isAbsent: !letterCount,
+                                        isInRightPosition:
+                                            wordOfTheDay[index] === letter,
+                                        isInWrongPosition:
+                                            !!letterCount &&
+                                            wordOfTheDay[index] !== letter,
+                                    };
+                                });
                         }
                         return row;
                     });
@@ -96,6 +128,7 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
         setCurrentWord,
         setGrid,
         wordOfTheDay,
+        wordCountMap,
     ]);
 
     return { pressedKeys };

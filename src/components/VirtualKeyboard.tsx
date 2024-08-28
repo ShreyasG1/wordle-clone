@@ -1,8 +1,9 @@
 import KeyboardBox from "./KeyboardBox";
 import "../styles/VirtualKeyboard.css";
 import { KEYS } from "../common/constants";
+import { VirtualKeyboardProps } from "../types";
 
-const VirtualKeyboard = () => {
+const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ pressedKeys }) => {
     return (
         <div className="virtual-keyboard">
             {KEYS.map((row, rowIndex) => (
@@ -11,9 +12,13 @@ const VirtualKeyboard = () => {
                         <KeyboardBox
                             key={`box-${cellIndex + 1}`}
                             letter={letter}
-                            isAbsent={false}
-                            isInRightPosition={false}
-                            isInWrongPosition={false}
+                            isAbsent={pressedKeys[letter]?.isAbsent}
+                            isInRightPosition={
+                                pressedKeys[letter]?.isInRightPosition
+                            }
+                            isInWrongPosition={
+                                pressedKeys[letter]?.isInWrongPosition
+                            }
                         />
                     ))}
                 </div>

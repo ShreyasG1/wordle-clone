@@ -1,11 +1,11 @@
 import { LetterBoxProps } from "../types";
 
-const LetterBox = ({
+const LetterBox: React.FC<LetterBoxProps> = ({
     letter,
     isAbsent,
     isInRightPosition,
     isInWrongPosition,
-}: LetterBoxProps) => {
+}) => {
     return (
         <div
             className={`letter-box ${
