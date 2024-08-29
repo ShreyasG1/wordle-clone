@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { pressedKeysState, useKeyCaptureProps } from "../types";
-import { getWordleWord } from "../common/utils";
+import { getWordleWord, storeGrid } from "../common/utils";
 
 const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
     const [currentRow, setCurrentRow] = useState<number>(0);
@@ -174,6 +174,12 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
         wordOfTheDay,
         wordCountMap,
     ]);
+
+    useEffect(() => {
+        if (currentRow > 0) {
+            storeGrid(grid);
+        }
+    }, [currentRow]);
 
     return { pressedKeys };
 };
