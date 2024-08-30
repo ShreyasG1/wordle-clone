@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { pressedKeysState, useKeyCaptureProps } from "../types";
-import { getWordleWord, storeGrid } from "../common/utils";
+import {
+    getStoredGrid,
+    getWordleWord,
+    isWordInList,
+    storageReturnState,
+    storeGrid,
+} from "../common/utils";
 
 const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
     const [currentRow, setCurrentRow] = useState<number>(0);
@@ -60,7 +66,8 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
             } else if (
                 key === "Enter" &&
                 currentWordLength === 5 &&
-                currentRow < 5
+                currentRow < 5 &&
+                isWordInList(currentWord)
             ) {
                 setGrid((prev) => {
                     return prev.map((row, index) => {
@@ -177,9 +184,22 @@ const useKeyCapture = ({ grid, setGrid }: useKeyCaptureProps) => {
 
     useEffect(() => {
         if (currentRow > 0) {
-            storeGrid(grid);
+            storeGrid(grid, currentRow, pressedKeys);
         }
     }, [currentRow]);
+
+    useEffect(() => {
+        const setGridStateFromStorage = async () => {
+            const storedData: storageReturnState | undefined =
+                await getStoredGrid();
+            const { grid, currentRow, pressedKeys } = storedData || {};
+
+            if (grid) setGrid(grid);
+            if (currentRow) setCurrentRow(currentRow);
+            if (pressedKeys) setPressedKeys(pressedKeys);
+        };
+        setGridStateFromStorage();
+    }, [setGrid, setCurrentRow, setPressedKeys]);
 
     return { pressedKeys };
 };

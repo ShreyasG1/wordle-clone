@@ -22,14 +22,6 @@ function App() {
         grid,
     });
 
-    useEffect(() => {
-        const setGridStateFromStorage = async () => {
-            const grid: gridState = await getStoredGrid();
-            if (grid) setGrid(grid);
-        };
-        setGridStateFromStorage();
-    }, []);
-
     return (
         <div className="wrapper">
             <Grid grid={grid} pressedKeys={pressedKeys} />
